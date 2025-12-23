@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang='zh'>
+<head>
+    <meta charset='utf-8'>
+    <title>PixelJihad 图片隐写</title>
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1'>
+    <link href='main.css' type='text/css' rel='stylesheet' />
+    <script src='sjcl.js' type='text/javascript'></script>
+    <script src='main.js' type='text/javascript'></script>
+</head>
+<body>
+    <h1>PixelJihad 图片隐写</h1>
+    <div id='about' class='section'>
+        一个 <a href='https://zh.wikipedia.org/wiki/%E9%9A%90%E5%86%99%E6%9C%AF'>图片隐写</a>
+         工具，使用纯 HTML5 编写，作者是 Zach Oakes。<br/>
+        <a href='about.html'>它是如何工作的？</a>
+    </div>
+    <div id='main' class='section dark'>
+        <div class='step'>选择一张图片</div>
+        <img id='preview' class='preview hide' alt="原始图片"/>
+        <div class='sectionbody'>
+            <label for='file'>选择图片</label>
+            <input type='file' id='file' title='选择图片' aria-label='选择图片' placeholder='选择图片' />
+        </div>
+    </div>
+    <div id='choose' class='section dark hide'>
+        <div class='step'>选择操作</div>
+        <div class='sectionbody'>
+            <div class='left'>
+                <textarea id='message' class='message' maxlength='1000'
+                    placeholder='输入隐蔽信息'></textarea>
+                <input type='password' id='password' class='password'
+                    placeholder='密码（可选）' />
+                <button id='encode' class='submit'>隐藏信息</button>
+            </div>
+            <div class='right'>
+                <input type='password' id='password2' class='password'
+                    placeholder='密码（可选）' />
+                <button id='decode' class='submit'>解密信息</button>
+            </div>
+        </div>
+    </div>
+    <div id='reveal' class='section dark hide'>
+        <div class='step'>隐藏信息</div>
+        <div id='messageDecoded' class='sectionbody'></div>
+    </div>
+    <canvas id='canvas' class='hide'></canvas>
+    <img id='output' / alt="处理后的图片"/>
+    
+    <footer>
+        <p>基于 <a href='https://github.com/oakes/PixelJihad'>https://github.com/oakes/PixelJihad</a> 制作</p>
+        <p> 许可证：<a href='http://UNLICENSE.org'>UNLICENSE</a></p>
+    </footer>
+</body>
+</html>
