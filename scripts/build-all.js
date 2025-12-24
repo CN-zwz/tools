@@ -93,7 +93,17 @@ function copyStaticProject(projectDir, destDir) {
 }
 
 try {
-    // 0. convert root README to HTML -> /build/index.html
+    // 0.1 Copy static assets(/assests) to /build
+    console.log('Step 0.1: Copying static assets...');
+    const staticSrc = path.join(root, 'static');
+    const staticDest = path.join(root, 'build');
+    try {
+        copyRecursive(staticSrc, staticDest);
+    } catch (err) {
+        console.warn('Failed to copy static assets:', err);
+    }
+
+    // 0.2 convert root README to HTML -> /build/index.html
     try {
         const readmeCandidates = ['README.md', 'README.MD', 'README'];
         let readmePath = null;
@@ -103,7 +113,7 @@ try {
         }
 
         if (readmePath) {
-            console.log(`Converting ${path.basename(readmePath)} -> build/index.html`);
+            console.log(`Step 0.2: Converting ${path.basename(readmePath)} -> build/index.html`);
             const buildDir = path.join(root, 'build');
             fs.mkdirSync(buildDir, { recursive: true });
             const outPath = path.join(buildDir, 'index.html');
@@ -127,7 +137,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>README</title>
-    <link rel="stylesheet" href="../marked-styles.css">
+    <link rel="stylesheet" href="style/marked-styles.css">
 </head>
 <body>
     ${htmlContent}
@@ -142,10 +152,12 @@ try {
         // don't abort whole build for README failures; just warn
     }
 
-    // 1. build hidden-word
+    // 1. handle hidden-word(should be built)
+    console.log('Step 1: Building hidden-word project...');
     simpleBuild('hidden-word', path.join(root, 'build', 'hidden-word'));
 
-    // 2. copy PixelJihad files (.html/.css/.js 等)
+    // 2. handle PixelJihad
+    console.log('Step 2: Copying PixelJihad static project...');
     copyStaticProject('PixelJihad', path.join(root, 'build', 'pixeljihad'));
 
     console.log('Build finished.');
