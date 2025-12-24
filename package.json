@@ -1,8 +1,11 @@
 {
   "name": "tools",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "build": "node scripts/build-all.js"
+  },
+  "dependencies": {
+    "marked": "^17.0.1"
   }
 }

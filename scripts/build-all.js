@@ -93,13 +93,7 @@ function copyStaticProject(projectDir, destDir) {
 }
 
 try {
-    // 1. build hidden-word
-    simpleBuild('hidden-word', path.join(root, 'build', 'hidden-word'));
-
-    // 2. copy PixelJihad files (.html/.css/.js 等)
-    copyStaticProject('PixelJihad', path.join(root, 'build', 'pixeljihad'));
-
-    // 3. convert root README to HTML -> /build/index.html
+    // 0. convert root README to HTML -> /build/index.html
     try {
         const readmeCandidates = ['README.md', 'README.MD', 'README'];
         let readmePath = null;
@@ -114,18 +108,32 @@ try {
             fs.mkdirSync(buildDir, { recursive: true });
             const outPath = path.join(buildDir, 'index.html');
 
-            // Try to use `marked` via npx (will install temporarily if needed).
+            // Try to use `marked`
             // Fallback to a very small safe wrapper if `marked` isn't available.
+            let htmlContent;
             try {
-                run(`npx --yes marked "${readmePath}" -o "${outPath}"`);
+                run(`marked "${readmePath}" -o "${outPath}"`);
+                htmlContent = fs.readFileSync(outPath, 'utf8');
             } catch (e) {
-                console.warn('npx marked failed, falling back to simple plaintext wrapper.');
+                console.warn('marked failed, falling back to simple plaintext wrapper.');
                 const md = fs.readFileSync(readmePath, 'utf8');
                 const escaped = md.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                const html = '<!doctype html><meta charset="utf-8"><title>README</title>\n<pre style="white-space:pre-wrap">' +
-                    escaped + '</pre>';
-                fs.writeFileSync(outPath, html, 'utf8');
+                htmlContent = '<pre style="white-space:pre-wrap">' + escaped + '</pre>';
             }
+
+            const fullHtml = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>README</title>
+    <link rel="stylesheet" href="../marked-styles.css">
+</head>
+<body>
+    ${htmlContent}
+</body>
+</html>`;
+            fs.writeFileSync(outPath, fullHtml, 'utf8');
         } else {
             console.warn('No README found in project root, skipping README -> HTML conversion.');
         }
@@ -133,6 +141,12 @@ try {
         console.error('Failed to convert README to HTML:', err);
         // don't abort whole build for README failures; just warn
     }
+
+    // 1. build hidden-word
+    simpleBuild('hidden-word', path.join(root, 'build', 'hidden-word'));
+
+    // 2. copy PixelJihad files (.html/.css/.js 等)
+    copyStaticProject('PixelJihad', path.join(root, 'build', 'pixeljihad'));
 
     console.log('Build finished.');
 } catch (err) {
